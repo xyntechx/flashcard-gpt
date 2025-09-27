@@ -121,34 +121,33 @@ export async function POST(request: NextRequest) {
 
             console.log("File uploaded to OpenAI with ID:", uploadedFile.id);
 
-            // const response = await client.responses.parse({
-            //     model: "gpt-5-mini",
-            //     input: [
-            //         {
-            //             role: "user",
-            //             content: [
-            //                 {
-            //                     type: "input_file",
-            //                     file_id: uploadedFile.id,
-            //                 },
-            //                 {
-            //                     type: "input_text",
-            //                     text: userQuestion,
-            //                 },
-            //             ],
-            //         },
-            //     ],
-            //     text: {
-            //         format: zodTextFormat(Flashcards, "flashcards"),
-            //     },
-            // });
+            const response = await client.responses.parse({
+                model: "gpt-5-mini",
+                input: [
+                    {
+                        role: "user",
+                        content: [
+                            {
+                                type: "input_file",
+                                file_id: uploadedFile.id,
+                            },
+                            {
+                                type: "input_text",
+                                text: userQuestion,
+                            },
+                        ],
+                    },
+                ],
+                text: {
+                    format: zodTextFormat(Flashcards, "flashcards"),
+                },
+            });
 
             // Clean up temporary file
             fs.unlinkSync(filepath);
 
             return Response.json({
-                // message: JSON.stringify(response.output_parsed || sampleData),
-                message: JSON.stringify(sampleData),
+                message: JSON.stringify(response.output_parsed || sampleData),
                 fileId: uploadedFile.id,
                 filename: file.name,
                 size: file.size,
